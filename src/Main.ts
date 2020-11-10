@@ -122,11 +122,75 @@ class Main extends eui.UILayer {
     },this)
     console.log( "createGameScene", RES.getRes("checkbox_select_disabled_png") );
     var batman:egret.Bitmap = new egret.Bitmap( RES.getRes("checkbox_select_disabled_png") );
-    batman.x=150;
+    batman.x=180;
     batman.y=120;
     this.addChild( batman )
+    var batma:egret.Bitmap = new egret.Bitmap( RES.getRes("checkbox_select_down_png") );
+    batma.x=150;
+    batma.y=120;
+     // batman.anchorOffsetX=40;
+    // batman.anchorOffsetY=40;
+    // batma.x+=40;
+    // batma.y+=40;
+    this.addChild( batma )
+    console.log( "display indexes:", this.getChildIndex( bg ), this.getChildIndex( batman ),  this.getChildIndex( batma ) );
+    // 改变深度
+    // this.setChildIndex( bg, this.getChildIndex( batma ) );
+    // 交换深度
+    // this.swapChildren( bg, batma );
+    // 数值改变深度
+    // this.setChildIndex( batman, 20 );
+    console.log( "display indexes:", this.getChildIndex( bg ), this.getChildIndex( batman ),  this.getChildIndex( batma ) );
+    
+    this.times = -1;
+   var self = this;
+    this.stage.addEventListener( egret.TouchEvent.TOUCH_TAP, function(){ 
+    switch ( ++ self.times % 3 ) { 
+        case 0: egret.Tween.get( batman ).to( { x:batma.x }, 300, egret.Ease.circIn );   
+                egret.Tween.get( batma ).to( { x:batman.x }, 300, egret.Ease.circIn );
+        break; 
+        case 1:  egret.Tween.get( batman ).to( { alpha:.3 }, 300, egret.Ease.circIn ).to( { alpha:1 }, 300, egret.Ease.circIn );
+         break; 
+        case 2:    egret.Tween.get( batman ).to( { scaleX:.4, scaleY:.4 }, 500, egret.Ease.circIn ).to( { scaleX:1, scaleY:1 }, 500, egret.Ease.circIn );
+         break; 
+    } 
+
+
+}, this );
+// 网络请求
+    var request = new egret.HttpRequest();
+    request.responseType = egret.HttpResponseType.TEXT;
+    request.open("http://httpbin.org/get",egret.HttpMethod.GET);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send();
+    request.addEventListener(egret.Event.COMPLETE,this.onGetComplete,this);
+    request.addEventListener(egret.IOErrorEvent.IO_ERROR,this.onGetIOError,this);
+    request.addEventListener(egret.ProgressEvent.PROGRESS,this.onGetProgress,this);
+
+   
     
     }
+    private times:number;
+    private onGetComplete(event:egret.Event):void {
+    var request = <egret.HttpRequest>event.currentTarget;
+    console.log("get data : ",request.response);
+    var responseLabel = new egret.TextField();
+    responseLabel.size = 18;
+    // responseLabel.text = "GET response: \n" + request.response.substring(0, 50) + "...";
+    this.addChild(responseLabel);
+    responseLabel.x = 50;
+    responseLabel.y = 70;
+}
+
+private onGetIOError(event:egret.IOErrorEvent):void {
+    console.log("get error : " + event);
+}
+
+private onGetProgress(event:egret.ProgressEvent):void {
+    console.log("get progress : " + Math.floor(100*event.bytesLoaded/event.bytesTotal) + "%");
+}
+// webstore请求
+
     // protected touchHandler(evt:egret.TouchEvent){
     //       var tx:egret.TextField = evt.currentTarget;
     //       tx.textColor = 0x00ff00; 

@@ -108,7 +108,6 @@ var Main = (function (_super) {
                         return [4 /*yield*/, RES.getResAsync("description_json")];
                     case 2:
                         result = _a.sent();
-                        this.startAnimation(result);
                         return [4 /*yield*/, platform.login()];
                     case 3:
                         _a.sent();
@@ -166,103 +165,87 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.createGameScene = function () {
-        var sky = this.createBitmapByName("bg_jpg");
-        this.addChild(sky);
-        var stageW = this.stage.stageWidth;
-        var stageH = this.stage.stageHeight;
-        sky.width = stageW;
-        sky.height = stageH;
-        var topMask = new egret.Shape();
-        topMask.graphics.beginFill(0x000000, 0.5);
-        topMask.graphics.drawRect(0, 0, stageW, 172);
-        topMask.graphics.endFill();
-        topMask.y = 33;
-        this.addChild(topMask);
-        var icon = this.createBitmapByName("egret_icon_png");
-        this.addChild(icon);
-        icon.x = 26;
-        icon.y = 33;
-        var line = new egret.Shape();
-        line.graphics.lineStyle(2, 0xffffff);
-        line.graphics.moveTo(0, 0);
-        line.graphics.lineTo(0, 117);
-        line.graphics.endFill();
-        line.x = 172;
-        line.y = 61;
-        this.addChild(line);
-        var colorLabel = new egret.TextField();
-        colorLabel.textColor = 0xffffff;
-        colorLabel.width = stageW - 172;
-        colorLabel.textAlign = "center";
-        colorLabel.text = "Hello Egret";
-        colorLabel.size = 24;
-        colorLabel.x = 172;
-        colorLabel.y = 80;
-        this.addChild(colorLabel);
-        var textfield = new egret.TextField();
-        this.addChild(textfield);
-        textfield.alpha = 0;
-        textfield.width = stageW - 172;
-        textfield.textAlign = egret.HorizontalAlign.CENTER;
-        textfield.size = 24;
-        textfield.textColor = 0xffffff;
-        textfield.x = 172;
-        textfield.y = 135;
-        this.textfield = textfield;
-        var button = new eui.Button();
-        button.label = "Click!";
-        button.horizontalCenter = 0;
-        button.verticalCenter = 0;
-        this.addChild(button);
-        button.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
-    };
-    /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
-     */
-    Main.prototype.createBitmapByName = function (name) {
-        var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
-    };
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    Main.prototype.startAnimation = function (result) {
-        var _this = this;
-        var parser = new egret.HtmlTextParser();
-        var textflowArr = result.map(function (text) { return parser.parse(text); });
-        var textfield = this.textfield;
-        var count = -1;
-        var change = function () {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
+        var bg = new egret.Shape();
+        bg.graphics.beginFill(0x336699);
+        bg.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
+        bg.graphics.endFill();
+        //   super.addChild( bg )
+        this.addChild(bg);
+        var tx = new egret.TextField();
+        tx.text = 'ma tian ci';
+        tx.size = 33;
+        tx.x = 20;
+        tx.y = 20;
+        tx.width = this.stage.stageWidth - 40;
+        this.addChild(tx);
+        tx.touchEnabled = true;
+        //   tx.addEventListener( egret.TouchEvent.TOUCH_TAP, this.touchHandler, this );4
+        tx.addEventListener(egret.TouchEvent.TOUCH_TAP, function (evt) {
+            var tx = evt.currentTarget;
+            tx.textColor = 0X00ff00;
+        }, this);
+        console.log("createGameScene", RES.getRes("checkbox_select_disabled_png"));
+        var batman = new egret.Bitmap(RES.getRes("checkbox_select_disabled_png"));
+        batman.x = 180;
+        batman.y = 120;
+        this.addChild(batman);
+        var batma = new egret.Bitmap(RES.getRes("checkbox_select_down_png"));
+        batma.x = 150;
+        batma.y = 120;
+        // batman.anchorOffsetX=40;
+        // batman.anchorOffsetY=40;
+        // batma.x+=40;
+        // batma.y+=40;
+        this.addChild(batma);
+        console.log("display indexes:", this.getChildIndex(bg), this.getChildIndex(batman), this.getChildIndex(batma));
+        // 改变深度
+        // this.setChildIndex( bg, this.getChildIndex( batma ) );
+        // 交换深度
+        // this.swapChildren( bg, batma );
+        // 数值改变深度
+        // this.setChildIndex( batman, 20 );
+        console.log("display indexes:", this.getChildIndex(bg), this.getChildIndex(batman), this.getChildIndex(batma));
+        this.times = -1;
+        var self = this;
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
+            switch (++self.times % 3) {
+                case 0:
+                    egret.Tween.get(batman).to({ x: batma.x }, 300, egret.Ease.circIn);
+                    egret.Tween.get(batma).to({ x: batman.x }, 300, egret.Ease.circIn);
+                    break;
+                case 1:
+                    egret.Tween.get(batman).to({ alpha: .3 }, 300, egret.Ease.circIn).to({ alpha: 1 }, 300, egret.Ease.circIn);
+                    break;
+                case 2:
+                    egret.Tween.get(batman).to({ scaleX: .4, scaleY: .4 }, 500, egret.Ease.circIn).to({ scaleX: 1, scaleY: 1 }, 500, egret.Ease.circIn);
+                    break;
             }
-            var textFlow = textflowArr[count];
-            // 切换描述内容
-            // Switch to described content
-            textfield.textFlow = textFlow;
-            var tw = egret.Tween.get(textfield);
-            tw.to({ "alpha": 1 }, 200);
-            tw.wait(2000);
-            tw.to({ "alpha": 0 }, 200);
-            tw.call(change, _this);
-        };
-        change();
+        }, this);
+        // 网络请求
+        var request = new egret.HttpRequest();
+        request.responseType = egret.HttpResponseType.TEXT;
+        request.open("http://httpbin.org/get", egret.HttpMethod.GET);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.send();
+        request.addEventListener(egret.Event.COMPLETE, this.onGetComplete, this);
+        request.addEventListener(egret.IOErrorEvent.IO_ERROR, this.onGetIOError, this);
+        request.addEventListener(egret.ProgressEvent.PROGRESS, this.onGetProgress, this);
     };
-    /**
-     * 点击按钮
-     * Click the button
-     */
-    Main.prototype.onButtonClick = function (e) {
-        var panel = new eui.Panel();
-        panel.title = "Title";
-        panel.horizontalCenter = 0;
-        panel.verticalCenter = 0;
-        this.addChild(panel);
+    Main.prototype.onGetComplete = function (event) {
+        var request = event.currentTarget;
+        console.log("get data : ", request.response);
+        var responseLabel = new egret.TextField();
+        responseLabel.size = 18;
+        // responseLabel.text = "GET response: \n" + request.response.substring(0, 50) + "...";
+        this.addChild(responseLabel);
+        responseLabel.x = 50;
+        responseLabel.y = 70;
+    };
+    Main.prototype.onGetIOError = function (event) {
+        console.log("get error : " + event);
+    };
+    Main.prototype.onGetProgress = function (event) {
+        console.log("get progress : " + Math.floor(100 * event.bytesLoaded / event.bytesTotal) + "%");
     };
     return Main;
 }(eui.UILayer));

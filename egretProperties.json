@@ -12,11 +12,15 @@
     {
       "name": "eui"
     },
+    
     {
       "name": "assetsmanager"
     },
     {
       "name": "tween"
+    },
+    {
+    "name": "socket"
     },
     {
       "name": "promise"
