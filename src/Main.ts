@@ -61,7 +61,7 @@ class Main extends eui.UILayer {
         await this.loadResource()
         this.createGameScene();
         const result = await RES.getResAsync("description_json")
-        this.startAnimation(result);
+    
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
@@ -83,7 +83,15 @@ class Main extends eui.UILayer {
     }
 
     private loadTheme() {
-      
+        return new Promise((resolve, reject) => {
+            // load skin theme configuration file, you can manually modify the file. And replace the default skin.
+            //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
+            let theme = new eui.Theme("resource/default.thm.json", this.stage);
+            theme.addEventListener(eui.UIEvent.COMPLETE, () => {
+                resolve();
+            }, this);
+
+        })
     }
 
     private textfield: egret.TextField;
@@ -92,21 +100,53 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected createGameScene(): void {
-       
+      var bg:egret.Shape = new egret.Shape();
+      bg.graphics.beginFill( 0x336699 );
+      bg.graphics.drawRect( 0, 0, this.stage.stageWidth, this.stage.stageHeight ); 
+      bg.graphics.endFill();
+     //   super.addChild( bg )
+      this.addChild( bg )
+      var tx:egret.TextField = new egret.TextField();
+      tx.text = 'ma tian ci';
+      tx.size=33;
+      tx.x=20;
+      tx.y=20;
+      tx.width = this.stage.stageWidth-40;
+      this.addChild( tx );
+      tx.touchEnabled = true; 
+    //   tx.addEventListener( egret.TouchEvent.TOUCH_TAP, this.touchHandler, this );4
+    tx.addEventListener(egret.TouchEvent.TOUCH_TAP,function(evt:egret.TouchEvent){
+        var tx:egret.TextField = evt.currentTarget;
+        tx.textColor = 0X00ff00;
+
+    },this)
+    console.log( "createGameScene", RES.getRes("checkbox_select_disabled_png") );
+    var batman:egret.Bitmap = new egret.Bitmap( RES.getRes("checkbox_select_disabled_png") );
+    batman.x=150;
+    batman.y=120;
+    this.addChild( batman )
+    
     }
+    // protected touchHandler(evt:egret.TouchEvent){
+    //       var tx:egret.TextField = evt.currentTarget;
+    //       tx.textColor = 0x00ff00; 
+    // }
     
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
      * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
      */
     
+ 
     /**
      * 描述文件加载成功，开始播放动画
      * Description file loading is successful, start to play the animation
      */
-    private startAnimation(result: Array<any>): void {
-       
-    }
 
-    
+
+    /**
+     * 点击按钮
+     * Click the button
+     */
+   
 }
